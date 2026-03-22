@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for
 import google.generativeai as genai
 
-model = genai.GenerativeModel('gemini-pro')
-
 import os
-my_api_key_gemini = os.getenv('my_new_api_key_here')
+my_api_key_gemini = "AIzaSyDZNvGVtuW2plBTIXZ00vbs-2X9Ips7Azg"
 
 genai.configure(api_key=my_api_key_gemini)
+
+model = genai.GenerativeModel('gemini-pro')
 
 app = Flask(__name__)
 
@@ -22,14 +22,15 @@ def index():
             prompt = request.form['prompt']
             question = prompt
 
-            response = model.generate_content(question)
+            system_prompt = "You are Heidi AI, a helpful and intelligent assistant created by Aryan Bunkar. Answer all questions helpfully and clearly. "
+            response = model.generate_content(system_prompt + question)
 
             if response.text:
                 return response.text
             else:
-                return "Sorry, but I think Gemini didn't want to answer that!"
+                return "Sorry, Heidi AI could not answer that. Please try again!"
         except Exception as e:
-            return "Sorry, but Gemini didn't want to answer that!"
+            return "Sorry, Heidi AI encountered an error. Please try again!"
 
     return render_template('index.html', **locals())
 
